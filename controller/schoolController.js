@@ -1,5 +1,4 @@
 import pool from '../db.js';
-// import getDistance from '../utils/distance.js';
 import { getDistance } from 'geolib';
 
 
@@ -12,7 +11,7 @@ export const addSchool = async (req, res) => {
 
   try {
     const [result] = await pool.execute(
-      'INSERT INTO schools (name, address, latitude, longitude) VALUES (?, ?, ?, ?)',
+      'INSERT INTO school (name, address, latitude, longitude) VALUES (?, ?, ?, ?)',
       [name, address, latitude, longitude]
     );
     res.status(201).json({ message: 'School added successfully', id: result.insertId });
@@ -21,31 +20,7 @@ export const addSchool = async (req, res) => {
   }
 };
 
-// export const listSchools = async (req, res) => {
-//   const { latitude, longitude } = req.query;
 
-//   if (!latitude || !longitude) {
-//     return res.status(400).json({ error: 'User latitude and longitude are required' });
-//   }
-
-//   try {
-//     const [schools] = await pool.execute('SELECT * FROM schools');
-
-//     const userLat = parseFloat(latitude);
-//     const userLon = parseFloat(longitude);
-
-//     const sortedSchools = schools
-//       .map(school => ({
-//         ...school,
-//         distance: getDistance(userLat, userLon, school.latitude, school.longitude)
-//       }))
-//       .sort((a, b) => a.distance - b.distance);
-
-//     res.status(200).json(sortedSchools);
-//   } catch (err) {
-//     res.status(500).json({ error: 'Error retrieving schools', details: err.message });
-//   }
-// };
 export const listSchools = async (req, res) => {
   const { lat, lng } = req.query;
 
@@ -54,7 +29,7 @@ export const listSchools = async (req, res) => {
   }
 
   try {
-    const [schools] = await pool.query('SELECT * FROM schools');
+    const [schools] = await pool.query('SELECT * FROM school');
 
     const schoolsWithDistance = schools.map(school => {
       const distance = getDistance(
